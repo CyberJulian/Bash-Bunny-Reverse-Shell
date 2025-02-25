@@ -1,4 +1,4 @@
-# 🔥 Persistent Reverse Shell via Bash Bunny
+# Persistent Reverse Shell via Bash Bunny
 
 **Author:** CyberJulian  
 **Category:** Network  
@@ -12,10 +12,10 @@ This project is intended for **educational and authorized testing purposes only*
 
 ---
 
-## 📌 Overview  
+## Overview  
 This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows target, enabling remote access via **Netcat**. The script runs on system startup, ensuring continuous reconnection even after reboots.
 
-## 🚀 Features  
+## Features  
 ✅ **Persistent Connection** – Automatically reconnects on system startup.  
 ✅ **Stealthy Execution** – Runs in the background from a hidden directory.  
 ✅ **Command Execution** – Executes shell commands remotely and returns output.  
@@ -23,7 +23,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 
 ---
 
-## 🛠️ How It Works
+## How It Works
 
 ### **1️⃣ Execution via Bash Bunny**  
 - The Bash Bunny injects keystrokes to **run a PowerShell command** that:  
@@ -41,7 +41,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 
 ---
 
-## 📜 Setup Instructions
+## Setup Instructions
 
 ### **🔹 Listener (Attacker Machine)**
 1. Start a Netcat listener on your machine:
@@ -66,7 +66,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 
 ---
 
-## 🖥️ Payload Breakdown
+## Payload Breakdown
 
 ### **`payload.txt` (Main Bash Bunny Script)**
 - Configures the Bash Bunny as a **HID & Storage device**.
@@ -85,7 +85,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 
 ---
 
-## 🏴‍☠️ Example Output  
+## Example Output  
 On the listener machine (`nc -lvnp 4444`):  
 ```
 Reverse shell connection established.
@@ -103,4 +103,4 @@ victim-pc\user
 ---
 
 ## 🏆 Credits  
-Created by **CyberJulian** 🎭  
+Created by **CyberJulian**
