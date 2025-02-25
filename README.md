@@ -79,6 +79,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 - Ensures the reverse shell script runs on every system boot.
 
 ### **`reverse.ps1` (Reverse Shell Loop)**
+**Change the IP to the Listener IP**
 - **Attempts to connect** to the attacker's listener IP & port.
 - **Executes received commands** and returns output.
 - **Loops indefinitely**, retrying if disconnected.
