@@ -1,6 +1,6 @@
 # Title:         Reverse Shell
 # Description:   Persistent reverse shell
-# Author:        VVill
+# Author:        CyberJulian
 # Category:      Network
 # Attackmodes:   HID STORAGE
 # Target:        Windows 10, 11
