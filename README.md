@@ -38,6 +38,8 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 ### **3️⃣ Remote Command Execution**  
 - Once connected, the target device **listens for commands** from the remote listener.
 - The session remains active until manually terminated.
+  - To **fully terminate the script**, type "exit". This will **completely stop execution** and close the connection.
+  - To stop the connection while **keeping the script running on loop**, enter Control+C
 
 ---
 
