@@ -106,9 +106,10 @@ victim-pc\user
 ---
 
 ### 🎯 **Future Enhancements**
-- Add **encryption** for secure communication.
+- Force target device to **connect to desired network** if applicable.
 - Implement **multi-platform support** (Mac & Linux).
-- Improve **obfuscation** to bypass security tools.
+- Improve **stealth** to bypass security tools & clean tracks.
+- Add **encryption** for secure communication.
 
 ---
 
