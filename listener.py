@@ -118,37 +118,35 @@ def start_listener():
     def redraw_shell_box():
         nonlocal shell_box_height, max_log_lines, cmd_input_y
 
-        # Calculate required height based on log lines (minimum 10)
+        # Clear the screen
+        clear_screen()
+
+        # ── STEP 1: Compute the box height & reposition prompt
         required_height = min(max(10, len(log_lines) + 4), rows - shell_y - 3)
+        shell_box_height = required_height
+        max_log_lines    = shell_box_height - 4
+        cmd_input_y      = shell_y + shell_box_height + 1
 
-        if required_height != shell_box_height:
-            shell_box_height = required_height
-            max_log_lines = shell_box_height - 4
+        # ── STEP 2: Clear area where the shell‐box will go
+        for y in range(shell_y, shell_y + shell_box_height + 5):
+            print_inside(top_x, y, " " * box_width)
 
-        # Update command input position
-        cmd_input_y = shell_y + shell_box_height + 1
-
-        # Clear the output area (from shell_y to bottom of terminal)
-        for i in range(shell_y, shell_y + shell_box_height + 5):
-            print_inside(top_x, i, " " * box_width)
-
-        # Draw the console box
+        # ── STEP 3: Draw the console box with its own title
         draw_box(top_x, shell_y, box_width, shell_box_height, "REVERSE SHELL CONSOLE")
 
-        # Display the log lines with proper wrapping
+        # ── STEP 4: Display the latest log lines inside that box
         display_lines = log_lines[-max_log_lines:] if log_lines else []
-        wrapped_lines = []
+        wrapped = []
         for line in display_lines:
-            # Wrap lines that are too long for the box
+            # simple wrap at box_width-6 (for margins)
             while len(line) > box_width - 6:
-                wrapped_lines.append(line[:box_width - 6])
+                wrapped.append(line[:box_width - 6])
                 line = line[box_width - 6:]
-            wrapped_lines.append(line)
+            wrapped.append(line)
 
-        # Display the wrapped lines
-        for i, line in enumerate(wrapped_lines[-max_log_lines:]):
-            padding = " " * (box_width - 6 - len(line))
-            print_inside(top_x + 3, shell_y + 2 + i, line + padding)
+        for i, line in enumerate(wrapped[-max_log_lines:]):
+            pad = " " * (box_width - 6 - len(line))
+            print_inside(top_x + 3, shell_y + 2 + i, line + pad)
 
     # Initial shell box setup
     redraw_shell_box()
@@ -318,6 +316,8 @@ def start_listener():
                         output = data.decode(errors='ignore').strip()
                         if output:
                             log_lines.extend(output.splitlines())
+                            # Display the output in a paged manner
+                            display_paged_output(output.splitlines())
                         else:
                             log_lines.append("[.] No output received.")
                         
@@ -345,8 +345,36 @@ def start_listener():
         print_inside(top_x, cmd_input_y + 2, "Press Enter to exit...")
         input()
 
+def display_paged_output(data, page_size=20):
+    """
+    Display long output in pages, allowing the user to scroll through it.
+    :param data: List of strings (lines of output).
+    :param page_size: Number of lines to display per page.
+    """
+    total_lines = len(data)
+    current_line = 0
+
+    while current_line < total_lines:
+        # Display a page of output
+        os.system("clear")  # Clear the screen for better readability
+        print("\n".join(data[current_line:current_line + page_size]))
+
+        # Check if there's more to display
+        if current_line + page_size >= total_lines:
+            print("\n[End of output. Press Enter to return.]")
+            input()
+            break
+        else:
+            print("\n[Press Enter to see more, or type 'q' to quit.]")
+            user_input = input().strip().lower()
+            if user_input == 'q':
+                break
+
+        # Move to the next page
+        current_line += page_size
+
 def print_banner():
-    """Print a stylish banner for the Bash Bunny Reverse Shell tool."""
+    """Print a stylish banner for the Reverse Shell tool."""
     clear_screen()
     
     # Get terminal dimensions
@@ -388,7 +416,7 @@ if __name__ == "__main__":
         start_listener()
     except KeyboardInterrupt:
         clear_screen()
-        print("\nExiting Bash Bunny Shell Controller...")
+        print("\nExiting Reverse Shell Controller...")
         time.sleep(0.5)
     except Exception as e:
         print(f"\nAn error occurred: {str(e)}")
