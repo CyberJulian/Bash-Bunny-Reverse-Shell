@@ -1,4 +1,4 @@
-# Persistent Reverse Shell with Terminal UI Listener
+# Persistent Reverse Shell w/ Terminal Listener UI
 
 **Author:** CyberJulian  
 **Category:** Network  
