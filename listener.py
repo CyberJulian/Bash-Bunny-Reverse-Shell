@@ -85,6 +85,12 @@ def get_port(x, y):
 
 def start_listener():
     clear_screen()
+    cols, rows = shutil.get_terminal_size()
+    box_width = cols
+    top_x, top_y, top_height = 0, 2, 5
+
+    # track the single line we call "status"
+    status_text = ""
     
     # Get terminal size
     cols, rows = shutil.get_terminal_size()
@@ -116,34 +122,43 @@ def start_listener():
     conn_status_y = shell_y - 1
 
     def redraw_shell_box():
-        nonlocal shell_box_height, max_log_lines, cmd_input_y
+        nonlocal shell_box_height, max_log_lines, cmd_input_y, status_text
 
-        # Clear the screen
+        # 1) Wipe the entire screen
         clear_screen()
 
-        # ── STEP 1: Compute the box height & reposition prompt
-        required_height = min(max(10, len(log_lines) + 4), rows - shell_y - 3)
-        shell_box_height = required_height
+        # 2) Reprint the connection status line (if any)
+        if status_text:
+            print_inside(top_x, conn_status_y, status_text.ljust(box_width))
+
+        # 3) Print your “Reverse” title centered on row 0
+        title = "Reverse"
+        x = (box_width - len(title)) // 2
+        print_inside(0, 0, " " * box_width)  # clear row 0
+        print_inside(x, 0, title)
+
+        # 4) Compute console‑box dims & reposition the prompt
+        shell_box_height = min(max(10, len(log_lines) + 4),
+                               rows - shell_y - 3)
         max_log_lines    = shell_box_height - 4
         cmd_input_y      = shell_y + shell_box_height + 1
 
-        # ── STEP 2: Clear area where the shell‐box will go
+        # 5) Clear out where the console box will go
         for y in range(shell_y, shell_y + shell_box_height + 5):
             print_inside(top_x, y, " " * box_width)
 
-        # ── STEP 3: Draw the console box with its own title
-        draw_box(top_x, shell_y, box_width, shell_box_height, "REVERSE SHELL CONSOLE")
+        # 6) Draw the console box
+        draw_box(top_x, shell_y, box_width, shell_box_height,
+                 "REVERSE SHELL CONSOLE")
 
-        # ── STEP 4: Display the latest log lines inside that box
+        # 7) Fill it with the most recent log_lines
         display_lines = log_lines[-max_log_lines:] if log_lines else []
         wrapped = []
         for line in display_lines:
-            # simple wrap at box_width-6 (for margins)
             while len(line) > box_width - 6:
                 wrapped.append(line[:box_width - 6])
                 line = line[box_width - 6:]
             wrapped.append(line)
-
         for i, line in enumerate(wrapped[-max_log_lines:]):
             pad = " " * (box_width - 6 - len(line))
             print_inside(top_x + 3, shell_y + 2 + i, line + pad)
@@ -153,7 +168,7 @@ def start_listener():
 
     # Display listening status
     status_text = f"STATUS: Listening on 0.0.0.0:{port}..."
-    print_inside(top_x, conn_status_y, status_text + " " * (box_width - len(status_text)))
+    redraw_shell_box()
     
     try:
         # Setup socket
