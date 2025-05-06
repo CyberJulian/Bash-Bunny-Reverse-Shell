@@ -102,7 +102,7 @@ def display_logo(x, y, box_width):
         "      █   ▀███▀    █  █  ▀███▀     █             ▀███▀       ",
         "     ▀              █▐            ▀                          ",
         "                    ▐                                        ",
-        "                                                             "  # Added an extra empty line
+        "                                                             "
     ]
 
     # Center each line
@@ -163,18 +163,23 @@ def get_command(prompt_x, prompt_y, prompt_text):
 # OUTPUT DISPLAY
 ###########################################
 
-def display_paged_output(data, page_size=20):
+def display_paged_output(data, page_size=20, interface=None):
     """
     Display long output in pages, allowing the user to scroll through it.
     :param data: List of strings (lines of output).
     :param page_size: Number of lines to display per page.
+    :param interface: The ShellInterface object to redraw after paging.
     """
     total_lines = len(data)
     current_line = 0
 
+    # Save current terminal state
+    saved_screen = []
+    cols, rows = shutil.get_terminal_size()
+    
     while current_line < total_lines:
         # Display a page of output
-        os.system("clear")  # Clear the screen for better readability
+        clear_screen()
         print("\n".join(data[current_line:current_line + page_size]))
 
         # Check if there's more to display
@@ -190,6 +195,10 @@ def display_paged_output(data, page_size=20):
 
         # Move to the next page
         current_line += page_size
+
+    # Redraw the interface after paged output
+    if interface:
+        interface.redraw_shell_box()
 
 ###########################################
 # SHELL INTERFACE COMPONENTS
@@ -261,6 +270,10 @@ class ShellInterface:
         for i, line in enumerate(wrapped[-self.max_log_lines:]):
             pad = " " * (self.box_width - 6 - len(line))
             print_inside(self.top_x + 3, self.shell_y + 2 + i, line + pad)
+
+        # 8) Reset cursor position for input
+        move_cursor(self.top_x, self.cmd_input_y)
+        sys.stdout.flush()
 
     def add_log(self, message):
         """Add a message to the log and update the display."""
@@ -366,12 +379,12 @@ def process_command(command, conn, addr, interface):
     output = data.decode(errors='ignore').strip()
     if output:
         interface.add_log(output.splitlines())
-        # Display the output in a paged manner
-        display_paged_output(output.splitlines())
+        # Display the output in a paged manner, passing interface for redraw
+        display_paged_output(output.splitlines(), interface=interface)
     else:
         interface.add_log("[.] No output received.")
     
-    # Reset status
+    # Reset status and ensure shell box is redrawn
     interface.set_status(f"CONNECTION FROM {addr[0]}:{addr[1]}")
     
     return True
