@@ -20,7 +20,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 ✅ **Stealthy Execution** – Runs in the background from a hidden directory.  
 ✅ **Command Execution** – Executes shell commands remotely and returns output.  
 ✅ **File Download** – Transfer files from the target system to the attacker machine.  
-✅ **Interactive Terminal UI** – Enhanced console interface with status tracking.  
+✅ **Interactive Terminal UI** – Nice terminal interface.  
 ✅ **Paged Output** – Easily navigate through large command outputs.  
 ✅ **Automatic Deployment** – Installs via Bash Bunny keystroke injection.  
 
@@ -49,7 +49,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 
 ## Setup Instructions
 
-### **🔹 Listener (Attacker Machine)**
+### **Listener (Attacker Machine)**
 1. Start the listener on your machine:
    ```bash
    python3 listener.py
@@ -60,7 +60,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
    - Command history and output
    - Interactive shell prompt
 
-### **🔹 Listener Interface Features**
+### **Listener Interface Features**
 - **Visual Status Tracking** – See connection status and client details at a glance
 - **Command History** – View previously executed commands and their outputs
 - **Paged Output** – Large command responses are displayed in easily navigable pages
@@ -69,7 +69,7 @@ This **Bash Bunny payload** deploys a **persistent reverse shell** on a Windows 
 - **Clean Exit** – Type `exit` to terminate the session (You'll have to wait for the computer to restart if you close with `exit`)
     - Use Control + C to end your connection and keep the program running on the target computer for a later connection
 
-### **🔹 Deployment via Bash Bunny**
+### **Deployment via Bash Bunny**
 1. **Edit reverse.ps1** to set the correct **listener IP address**:
 - Open reverse.ps1 and locate this line:
   ```
